@@ -4,6 +4,7 @@ import com.codegeek.hogwartsartifactsonline.artifact.Artifact;
 import com.codegeek.hogwartsartifactsonline.artifact.ArtifactRepository;
 import com.codegeek.hogwartsartifactsonline.hogwartsuser.HogwartsUser;
 import com.codegeek.hogwartsartifactsonline.hogwartsuser.UserRepository;
+import com.codegeek.hogwartsartifactsonline.hogwartsuser.UserService;
 import com.codegeek.hogwartsartifactsonline.wizard.Wizard;
 import com.codegeek.hogwartsartifactsonline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -18,12 +19,12 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final WizardRepository wizardRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository, UserRepository userRepository) {
+    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository, UserRepository userRepository, UserService userService) {
         this.artifactRepository = artifactRepository;
         this.wizardRepository = wizardRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -109,6 +110,8 @@ public class DBDataInitializer implements CommandLineRunner {
         u3.setEnabled(false);
         u3.setRoles("user");
 
-        userRepository.saveAll(List.of(u1,u2,u3));
+        userService.save(u1);
+        userService.save(u2);
+        userService.save(u3);
     }
 }

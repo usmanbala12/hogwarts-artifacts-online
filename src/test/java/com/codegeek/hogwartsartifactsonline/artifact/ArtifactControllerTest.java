@@ -3,7 +3,6 @@ package com.codegeek.hogwartsartifactsonline.artifact;
 import com.codegeek.hogwartsartifactsonline.artifact.dto.ArtifactDTO;
 import com.codegeek.hogwartsartifactsonline.system.StatusCode;
 import com.codegeek.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class ArtifactControllerTest {
 
     @Autowired
