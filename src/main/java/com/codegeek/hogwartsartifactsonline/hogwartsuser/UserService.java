@@ -1,17 +1,24 @@
 package com.codegeek.hogwartsartifactsonline.hogwartsuser;
 
 import com.codegeek.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<HogwartsUser> findAll() {
@@ -24,6 +31,8 @@ public class UserService {
 
 
     public HogwartsUser save(HogwartsUser hogwartsUser) {
+        // TODO we need to encode plain text passwords before saving to the DB
+        hogwartsUser.setPassword(passwordEncoder.encode(hogwartsUser.getPassword()));
         return userRepository.save(hogwartsUser);
     }
 
@@ -41,5 +50,12 @@ public class UserService {
     public void delete(Integer userId) {
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user", userId));
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username) // find user from data
+                .map(MyUserPrincipal::new) // if found wrap returned value in MyUserPrincipal object
+                .orElseThrow(() -> new UsernameNotFoundException("username "+username+ " is not found")); // else throw exception
     }
 }
